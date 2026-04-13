@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Witness Stand</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg2: #f7f6f3;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --hint: #a0a0a0;
+      --border: rgba(0,0,0,0.1);
+      --border-med: rgba(0,0,0,0.18);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #141414;
+        --bg2: #1e1e1e;
+        --text: #e8e6e0;
+        --muted: #9a9890;
+        --hint: #5e5c58;
+        --border: rgba(255,255,255,0.1);
+        --border-med: rgba(255,255,255,0.18);
+      }
+    }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 17px;
+    }
+
+    .site {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 1.5rem;
+      border-bottom: 0.5px solid var(--border-med);
+      margin-bottom: 3rem;
+    }
+
+    .nav-logo {
+      font-size: 19px;
+      font-weight: normal;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.75rem;
+    }
+
+    .nav-links a {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    /* PAGES */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* HOME */
+    .hero {
+      margin-bottom: 3.5rem;
+    }
+
+    .hero-eyebrow {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--hint);
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-size: 30px;
+      font-weight: normal;
+      line-height: 1.25;
+      letter-spacing: -0.3px;
+      margin-bottom: 1rem;
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 520px;
+    }
+
+    /* POST LIST */
+    .posts-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--hint);
+      margin-bottom: 1.25rem;
+    }
+
+    .post-card {
+      padding: 1.4rem 0;
+      border-top: 0.5px solid var(--border);
+      cursor: pointer;
+    }
+
+    .post-card:last-child {
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .post-card:hover .post-title {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .post-meta {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12px;
+      color: var(--hint);
+      margin-bottom: 0.4rem;
+    }
+
+    .post-title {
+      font-size: 18px;
+      font-weight: normal;
+      line-height: 1.35;
+      margin-bottom: 0.5rem;
+    }
+
+    .post-excerpt {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .post-tag {
+      display: inline-block;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      border: 0.5px solid var(--border-med);
+      color: var(--muted);
+      margin-top: 0.7rem;
+    }
+
+    /* ARTICLE */
+    .article-back {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 2.5rem;
+    }
+
+    .article-back:hover { color: var(--text); }
+
+    .article-tag {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      display: inline-block;
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      border: 0.5px solid var(--border-med);
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .article-date {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12px;
+      color: var(--hint);
+      margin-bottom: 0.75rem;
+    }
+
+    .article-title {
+      font-size: 28px;
+      font-weight: normal;
+      line-height: 1.25;
+      letter-spacing: -0.3px;
+      margin-bottom: 0.75rem;
+    }
+
+    .article-byline {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.75rem;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .article-body p {
+      margin-bottom: 1.4rem;
+      line-height: 1.85;
+    }
+
+    .article-body h3 {
+      font-size: 19px;
+      font-weight: normal;
+      margin: 2rem 0 0.75rem;
+      font-style: italic;
+    }
+
+    /* ABOUT */
+    .about-section { max-width: 580px; }
+
+    .about-eyebrow {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--hint);
+      margin-bottom: 1.5rem;
+    }
+
+    .about-body p {
+      font-size: 17px;
+      line-height: 1.85;
+      margin-bottom: 1.3rem;
+      color: var(--text);
+    }
+
+    .about-divider {
+      border: none;
+      border-top: 0.5px solid var(--border);
+      margin: 2.5rem 0;
+    }
+
+    .about-detail {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .about-detail span { color: var(--text); }
+
+    /* FOOTER */
+    footer {
+      margin-top: 5rem;
+      padding-top: 1.5rem;
+      border-top: 0.5px solid var(--border);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12px;
+      color: var(--hint);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="site">
+    <nav>
+      <div class="nav-logo" onclick="showPage('home')">The Witness Stand</div>
+      <div class="nav-links">
+        <a onclick="showPage('home')">Home</a>
+        <a onclick="showPage('about')">About</a>
+      </div>
+    </nav>
+
+    <!-- HOME -->
+    <div id="home" class="page active">
+      <div class="hero">
+        <div class="hero-eyebrow">A personal blog by Colin Osindi</div>
+        <div class="hero-title">Observations from the<br>margins of everyday life</div>
+        <div class="hero-desc">Short stories, sharp turns, and the occasional realisation that life is far more ironic than we give it credit for.</div>
+      </div>
+
+      <div class="posts-label">Latest posts</div>
+
+      <div class="post-card" onclick="showPost(0)">
+        <div class="post-meta">April 10, 2026 &middot; 5 min read</div>
+        <div class="post-title">What cross-examination taught me about listening</div>
+        <div class="post-excerpt">The courtroom is a masterclass in attention. After years of cross-examining witnesses, I've found these skills quietly reshaping how I hear everything.</div>
+        <span class="post-tag">Reflection</span>
+      </div>
+
+      <div class="post-card" onclick="showPost(1)">
+        <div class="post-meta">March 28, 2026 &middot; 4 min read</div>
+        <div class="post-title">The documents we never read — and the ones we should</div>
+        <div class="post-excerpt">From rental agreements to privacy policies, we sign our names to things we barely glance at. A lawyer's honest confession.</div>
+        <span class="post-tag">Everyday law</span>
+      </div>
+
+      <div class="post-card" onclick="showPost(2)">
+        <div class="post-meta">March 15, 2026 &middot; 6 min read</div>
+        <div class="post-title">Truth in the age of AI: a lawyer's early questions</div>
+        <div class="post-excerpt">When evidence can be generated, testimony fabricated, and documents synthesised, what does "beyond reasonable doubt" really mean?</div>
+        <span class="post-tag">Law &amp; technology</span>
+      </div>
+    </div>
+
+    <!-- ARTICLE -->
+    <div id="article" class="page">
+      <div class="article-back" onclick="showPage('home')">&#8592; Back to posts</div>
+      <div id="article-content"></div>
+    </div>
+
+    <!-- ABOUT -->
+    <div id="about" class="page">
+      <div class="about-section">
+        <div class="about-eyebrow">About this blog</div>
+        <div class="about-body">
+          <p>Life is messy, loud, and rarely follows a script.</p>
+          <p>I write about the parts that don't make it into the highlight reel. The conversation overheard on a bus. The well-timed mistake that turns out to be the whole point. The irony that shows up uninvited and refuses to leave.</p>
+          <p>Every interaction is a plot point. Every person is a character. Every day is a draft. I spend my time here deconstructing the world around me; not to make sense of it, exactly, but to find the narrative threads that tie us together when we're not looking.</p>
+          <p>This is a space for short stories, and the occasional realization that life is far more ironic than we give it credit for. No polished advice. No highlight reels. Just a story that feels like a conversation over a cold drink.</p>
+        </div>
+        <hr class="about-divider" />
+        <div class="about-detail">Written by <span>Colin Osindi</span></div>
+        <div class="about-detail">Based in <span>Nairobi, Kenya</span></div>
+        <div class="about-detail">Updated <span>regularly</span></div>
+      </div>
+    </div>
+
+    <footer>
+      <span>The Witness Stand &copy; 2026</span>
+      <span>Colin Osindi &middot; Nairobi</span>
+    </footer>
+  </div>
+
+  <script>
+    const posts = [
+      {
+        tag: "Reflection", date: "April 10, 2026", read: "5 min read",
+        title: "What cross-examination taught me about listening",
+        body: `<p>There is a particular kind of silence that falls in a courtroom just before a witness answers. A held breath. In that pause, everything is on the table — what will be said, what won't, and what the gap between the two might mean.</p>
+        <p>I've spent years in that silence. And somewhere along the way, I started noticing it everywhere else too.</p>
+        <h3>The art of the prepared pause</h3>
+        <p>Cross-examination isn't really about asking questions. It's about knowing — before you open your mouth — exactly what the answer will be. You only ask what you already know. The question is a frame, not a search.</p>
+        <p>This changes how you listen. You listen not just for what someone says, but for what they're choosing not to say. For the slight tilt away from the direct answer. For the word that almost arrived and didn't.</p>
+        <p>Outside the courtroom, in ordinary conversation, I find myself doing the same thing — not with suspicion, but with genuine curiosity. What is this person actually trying to tell me? What matters enough to them that they reached for this particular word?</p>
+        <h3>What this means for everyone</h3>
+        <p>You don't need to be a lawyer to listen like one. You just need to slow down, let the silence sit, and resist the urge to fill it. The best answers often arrive just after the pause that felt too long.</p>`
+      },
+      {
+        tag: "Everyday law", date: "March 28, 2026", read: "4 min read",
+        title: "The documents we never read — and the ones we should",
+        body: `<p>I will confess something that might surprise you, coming from a lawyer: I have clicked "I agree" on a terms and conditions page without reading it. More than once.</p>
+        <p>We all have. The documents are long, the language is dense, and the box to tick is right there. So we tick it.</p>
+        <h3>Why it matters more than it seems</h3>
+        <p>Most of the time, nothing happens. But occasionally — in a dispute with a landlord, a falling-out with a service provider, or a data breach — those unread paragraphs become very relevant indeed. And by then, of course, it's too late to negotiate them.</p>
+        <p>There are a handful of documents worth reading carefully: your lease or tenancy agreement, your employment contract, and any financial product you sign up for. Not every clause — but the sections on termination, liability, and what happens if things go wrong.</p>
+        <h3>A practical shortcut</h3>
+        <p>You don't have to read everything. But before you sign anything significant, find the section titled "Termination," "Limitation of liability," or "Dispute resolution." Those three sections will tell you most of what you need to know about what happens when the relationship breaks down. Which is, ultimately, the only time the contract really matters.</p>`
+      },
+      {
+        tag: "Law & technology", date: "March 15, 2026", read: "6 min read",
+        title: "Truth in the age of AI: a lawyer's early questions",
+        body: `<p>The law has always had to contend with liars. What it has not, until now, had to contend with is convincing fabrications that leave no trace of human deception — no trembling hand, no inconsistent alibi, no motive that can be cross-examined.</p>
+        <p>Synthetic evidence is no longer hypothetical. Images, audio, documents, even video can be generated or manipulated at a quality that challenges forensic detection. And the legal system — built on the assumption that evidence exists independently of those who present it — is only beginning to grapple with what this means.</p>
+        <h3>The standard of proof, under pressure</h3>
+        <p>"Beyond reasonable doubt" is a phrase that sounds robust. But it has always rested on a quiet assumption: that the raw material of evidence — what was said, what was written, what was recorded — corresponds to something that actually happened.</p>
+        <p>When that assumption becomes uncertain, the phrase becomes harder to apply. Not impossible — courts have always weighed contested evidence. But the nature of the contest is changing.</p>
+        <h3>Questions worth asking now</h3>
+        <p>I don't think the answer is pessimism. Courts have adapted before — to photography, to recorded testimony, to digital communications. They will adapt again. But the adaptation has to be deliberate, and it has to involve asking the right questions early. What authentication standards should courts require? How should juries be directed when evidence authenticity is disputed? Who bears the burden of proving a document is genuine — or fabricated?</p>
+        <p>These are the questions I find myself returning to. The courtroom has always been a place where truth is contested, not simply declared. That, at least, hasn't changed.</p>`
+      }
+    ];
+
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function showPost(i) {
+      const p = posts[i];
+      document.getElementById('article-content').innerHTML = `
+        <span class="article-tag">${p.tag}</span>
+        <div class="article-date">${p.date} &middot; ${p.read}</div>
+        <div class="article-title">${p.title}</div>
+        <div class="article-byline">By Colin Osindi</div>
+        <div class="article-body">${p.body}</div>
+      `;
+      showPage('article');
+    }
+  </script>
+</body>
+</html>
